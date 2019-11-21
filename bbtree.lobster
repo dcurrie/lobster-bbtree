@@ -82,6 +82,7 @@ enum balance_criteria: // balance criteria
     alpha = 2
 
 def nodeSize(n:BBTree?) -> int: // n: BBTree[K,V]
+//def nodeSize(n) -> int: // n: BBTree<K,V>?
     if not n:
         return 0
     else:
@@ -221,8 +222,6 @@ def add(root, key, value): // -> BBTree<K,V>
 /* ***************************** lookup *********************************
 */
 
-// vdefault is returned is key is not in tree
-//
 def get(root, key, vdefault): // -> V
     // Retrieves the value for `key` in the tree `root` iff `key` is in the tree. 
     // Otherwise, `vdefault` is returned. O(log N)
@@ -241,7 +240,7 @@ def getNth(root, index: int, kdefault, vdefault): // -> K, V
     // Get the key,value pair of the 0-based `index` key in the tree `root` when index is 
     // positive and less than the tree length. Or get the tree length plus `index` key in 
     // the tree `root` when the `index` is negative and greater than the negative tree length.
-    // Otherwise, `default` is returned. O(log N)
+    // Otherwise, `kdefault, vdefault` is returned. O(log N)
     let treesize = nodeSize(root)
     var uindex = 0
     if (index < treesize) and (index >= (-treesize)):
@@ -432,10 +431,10 @@ def delMax(root): // -> BBTree<K,V>
 /* ****************************** rank ***********************************
 */
 
-def rank(root, key, vdefault: int) -> int:
+def rank(root, key, rdefault: int) -> int:
     // Retrieves the 0-based index of `key` in the tree `root` iff `key` is in the tree. 
-    // Otherwise, `vdefault` is returned. O(log N)
-    var result = vdefault
+    // Otherwise, `rdefault` is returned. O(log N)
+    var result = rdefault
     var n = 0
     var node = root
     while node:
@@ -450,111 +449,54 @@ def rank(root, key, vdefault: int) -> int:
             node = nil // break
     return result
 
-/* **************************** iterators ********************************
-*/
-
-/* useless!?...
-iterator preorder*[K,V](root: BBTree[K,V]): (K,V) =
-  // Preorder traversal of a binary tree.
-  // Since recursive iterators are not yet implemented,
-  // this uses an explicit stack (which is more efficient anyway):
-  var stack: seq[BBTree[K,V]] = @[root]
-  while stack.len > 0:
-    var curr = stack.pop()
-    while curr != nil:
-      yield (curr.key, curr.val)
-      add(stack, curr.right)  // push right subtree onto the stack
-      curr = curr.left        // and follow the left pointer
-*/
-/* TODO
-iterator inorder(root): (K,V) =
-    // Inorder traversal of the tree at `root`, i.e., from smallest to largest key
-    // Since recursive iterators are not yet implemented, this uses an explicit stack 
-    var stack: seq[BBTree[K,V]] = @[]
-    var curr = root
-    while (not curr == nil) or stack.len > 0:
-        while (curr != nil):
-            add(stack, curr) // push node before going left
-            curr = curr.left
-        // at the leftmost node; curr is nil
-        curr = stack.pop()
-        yield (curr.key, curr.val)
-        curr = curr.right // now go right
-
-iterator revorder(root): (K,V) =
-    // Reverse inorder traversal of the tree at `root`, i.e., from largest to smallest key
-    // Since recursive iterators are not yet implemented, this uses an explicit stack
-    var stack: seq[BBTree[K,V]] = @[]
-    var curr = root
-    while (curr != nil) or stack.len > 0:
-        while (curr != nil):
-            add(stack, curr) // push node before going right
-            curr = curr.right
-        // at the rightmost node; curr is nil
-        curr = stack.pop()
-        yield (curr.key, curr.val)
-        curr = curr.left // now go left
-*/
-
 /* **************************** fold & map ********************************
 */
 
-def foldr(root, base, f): // f: proc (key, val, base: T): T, base: T
-    // Applies the proc `f` to each value of tree `root` in reverse order (right to left).
-    // Uses the `base` value for the first rightmost operand. So, for example, to construct a
-    // concatenated string of stringified tree values, you could use
-    // 
-    // .. code-block::
-    // 
-    //     foldr(root, proc (k: int, v: int, b: string): string = discard k; $v & ";" &  b, "")
-    // Use explicit stack; use the logic from `revorder` above
+def foldr(root, base, f): // -> T // base: T, f: (K,V,T)->T,
+    // Applies the function `f` to each key value pair of tree `root` in reverse order (right to left).
+    // Uses the `base` value for the first rightmost operand. So, for example, TODO
+    // Uses explicit stack.
     var result = base
-    var tstn:BBTree? = root
-    if tstn:
-        let stack = [] // : [BBTree<K,V>]
-        var curr:BBTree = tstn
-        while tstn or length(stack) > 0:
-            while (tstn):
-                curr = tstn
-                tstn = curr.right
-                push(stack, curr) // push node before going right
-            // at the rightmost node; curr is == tos
-            curr = pop(stack)
-            result = f(curr.key, curr.val, result)
-            tstn = curr.left // now go left
+    let stack = [] // : [BBTree<K,V>]
+    var curr = root
+    while curr or length(stack) > 0:
+        while (curr):
+            push(stack, curr) // push node before going right
+            curr = curr.right
+        // at the rightmost node; curr is == tos
+        curr = pop(stack)
+        result = f(curr.key, curr.val, result)
+        curr = curr.left // now go left
     return result
 
-def foldl(root, base, f): // f: proc (key, val, base: T): T, base: T
-    // Applies the proc `f` to each value of tree `root` in order (left ro right).
+def foldl(root, base, f): // -> T // base: T, f: (K,V,T)->T,
+    // Applies the function `f` to each key value pair of tree `root` in order (left ro right).
     // Uses the `base` value for the first leftmost operand. So, for example, to construct a
-    // concatenated string of stringified tree values, you could use
-    // 
-    // .. code-block::
-    // 
-    //     fold(root, proc (k: int, v: int, b: string): string = discard k; $v & ";" &  b, "")
-    // Use explicit stack sice we have the logic from `inorder` above
+    // sum of the tree values, you could use ``foldl(root, 0): _a; _b + _c``
+    // Uses explicit stack.
     var result = base
-    var tstn:BBTree? = root
-    if tstn:
-        let stack = [] // : [BBTree<K,V>]
-        var curr:BBTree = tstn
-        while tstn or length(stack) > 0:
-            while (tstn):
-                curr = tstn
-                tstn = curr.left
-                push(stack, curr) // push node before going left
-            // at the leftmost node; curr is == tos
-            curr = pop(stack)
-            result = f(curr.key, curr.val, result)
-            tstn = curr.right // now go right
+    let stack = [] // : [BBTree<K,V>]
+    var curr = root
+    while curr or length(stack) > 0:
+        while (curr):
+            push(stack, curr) // push node before going left
+            curr = curr.left
+        // at the leftmost node; curr is == tos
+        curr = pop(stack)
+        result = f(curr.key, curr.val, result)
+        curr = curr.right // now go right
     return result
 
-def foreach(root, f):
+def foreach(root, f): // -> void // root: BBTree<K,V>, f: (K,V)->void
+    // Applies function `f` to each key and corresponding value of `root`, discarding
+    // the results.
     foldl(root, false): f(_k,_v);false
 
-def map(root:BBTree?, f): // f: proc (key, val): T ; -> BBTree<K,T>
+def map(root, f): // -> BBTree<K,T> // base: T, f: (K,V,T)->T,
     // Returns a new tree with the keys of tree `root` and values that are the result of 
-    // applying `f` to each key and corresponding value. So, for example, to construct a
+    // applying `f` to each key and corresponding value. So, for example, TODO
+    //
+    // to construct a
     // tree with values replaced by concatenated string of key,value pairs, you could use
     // 
     // .. code-block::
@@ -928,7 +870,17 @@ def test1():
     //ok foldl(tre2, false): print(_k); true
     foreach(tre2): print(_); true
 
-    // dunno why ng: bbtree.lobster(348): error: extractMax returns 1 values, 3 needed
+    let f = def(k,v,b): concat_string([b,k],":")
+    print(foldl(tre2, "keys", f))
+
+    // segfault:
+    // print(foldl(tre2, "keys"): def(k,v,b): concat_string([b,k],":"))
+
+    print(foldl(tre2, 0): _a; _b + _c)
+
+    // args not ordered lexically as advertised
+    //print(foldl(tre2, ""): _b; concat_string([_c, _a],":"))
+
     let tre3 = del(tre2, "hello")
     print tre3
 
