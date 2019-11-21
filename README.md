@@ -50,11 +50,11 @@ Department of Applied Mathematics Charles University in Prague, Czech Republic
 
 ### Documentation
 
-For now, you can view [Nim docs](http://htmlpreview.github.io/?https://github.com/dcurrie/nim-bbtree/blob/master/src/bbtree.html)
+See the doc directory. Here is the [API](https://github.com/dcurrie/lobster-bbtree/blob/master/doc/api.md)
 
 ### Installation
 
-TODO
+None, simplly include `bbtree.lobster` in your project
 
 ### Test
 
