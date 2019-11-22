@@ -116,6 +116,9 @@ run_test("string sets"):
     assert(setEqual(union(bb, aa), union(aa, bb)))
     assert(setEqual(intersection(bb, aa), intersection(aa, bb)))
     assert(disjoint(intersection(bb, aa), symmetricDifference(aa, bb)))
+    let numbers = toSet(["1", "2", "3", "4", "5"])
+    assert(numbers.contains("2"))
+    assert(numbers.contains("4"))
 
 
 // random stress test of bbtree.nim

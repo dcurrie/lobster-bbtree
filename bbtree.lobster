@@ -586,7 +586,7 @@ def union(tree1, tree2): // -> BBTree<K,V>
         // discard b
         return join(tree1.key, tree1.val, union(tree1.left, l), union(tree1.right, r))
 
-def unionMerge(tree1, tree2, merge): // merge: proc (k, v1, v2) // -> BBTree<K,V>
+def unionMerge(tree1, tree2, merge): // merge: (K,V,V)->V // -> BBTree<K,V>
     // Returns the union of the sets represented by the keys in `tree1` and `tree2`.
     // When viewed as maps, returns the key,value pairs that appear in either tree; if
     // a key appears in both trees, the value for that key is the result of the supplied
@@ -649,7 +649,7 @@ def intersection(tree1, tree2): // -> BBTree<K,V>
     // When viewed as maps, returns the key,value pairs for keys that appear in both trees; 
     // the value each key is selected from `tree1`, so
     // this function is asymmetrical for maps. If you need more comtrol over how the 
-    // values are selected for duplicate keys, see `uintersectionMerge`. O(M + N)
+    // values are selected for duplicate keys, see `intersectionMerge`. O(M + N)
     if not tree1:
         return tree1
     else: if not tree2:
@@ -661,7 +661,7 @@ def intersection(tree1, tree2): // -> BBTree<K,V>
         else:
             return join(intersection(tree1.left, l), intersection(tree1.right, r))
 
-def intersectionMerge(tree1, tree2, merge): // merge: proc (k, v1, v2) // -> BBTree<K,V>
+def intersectionMerge(tree1, tree2, merge): // merge: (K,V,V)->V // -> BBTree<K,V>
     // Returns the set intersection of `tree1` and `tree2`. In other words, returns the keys
     // that are in both trees. 
     // When viewed as maps, returns the key,value pairs for keys that appear in both trees; 
@@ -779,16 +779,14 @@ def setEqual(tree1, tree2): // -> bool
 /* **************************** convenience funcs ********************************
 */
 
-def toSet(keys): // -> BBTree[K,bool]
+def toSet(keys): // -> BBTree<K,bool>
   // Creates a BBTree set that contains the given `keys` with value `true`.
   //
   // Example:
-  //
-  // .. code-block::
-  //   var numbers : BBTree[int,bool] = toSet([1, 2, 3, 4, 5])
-  //   assert numbers.contains(2)
-  //   assert numbers.contains(4)
-  var result = nil // :BBTree
+  //   let numbers = toSet(["1", "2", "3", "4", "5"])
+  //   assert(numbers.contains("2"))
+  //   assert(numbers.contains("4"))
+  var result:BBTree? = nil
   for(keys) key: result = add(result, key, true)
   return result
 
