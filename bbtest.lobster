@@ -93,6 +93,31 @@ run_test("getNth"):
     k, v = tre2.getNth(2, "", 0)
     assert(k == "" and v == 0)
 
+
+run_test("string sets"):
+    var aa = nil::BBTree
+    //number_to_string(number:int, base:int, minchars:int) -> string
+    for(99) i: aa = aa.add(number_to_string(i+1, 10, 5), true)
+    var bb = nil::BBTree
+    for(99) i: bb = bb.add(number_to_string(i+33, 10, 5), true)
+    let cc = intersection(aa, bb)
+    assert(len(cc) == 67)
+    assert(len(difference(cc, aa)) == 0)
+    assert(len(difference(cc, bb)) == 0)
+    assert(len(union(aa, bb)) == 131)
+    assert(len(union(bb, aa)) == 131)
+    //print len(difference(aa, bb))
+    //print fold(difference(aa, bb)), proc (k: int, v: bool, b: string): string = discard v; $k & ";" & b, "")
+    assert(len(difference(aa, bb)) == 32)
+    assert(len(difference(bb, aa)) == 32)
+    assert(len(symmetricDifference(aa, bb)) == 64)
+    assert(len(symmetricDifference(bb, aa)) == 64)
+    assert(setEqual(symmetricDifference(bb, aa), symmetricDifference(aa, bb)))
+    assert(setEqual(union(bb, aa), union(aa, bb)))
+    assert(setEqual(intersection(bb, aa), intersection(aa, bb)))
+    assert(disjoint(intersection(bb, aa), symmetricDifference(aa, bb)))
+
+
 // random stress test of bbtree.nim
 
 let STRESS_TEST_N =  2000
@@ -538,31 +563,6 @@ suite "test set funcs of bbtree.nim":
         bb = bb.add(y, true)
         check(aa =?= bb)
 
-    test "ints as set keys":
-        var aa : BBTree[int,bool]
-        for i in 1..99: aa = aa.add(i, true)
-        var bb : BBTree[int,bool]
-        for i in 33..131: bb = bb.add(i, true)
-        var cc = aa * bb
-        check(len(cc) == 67)
-        check(len(cc - aa) == 0)
-        check(len(cc - bb) == 0)
-        check(len(aa + bb) == 131)
-        check(len(bb + aa) == 131)
-        #echo len(aa - bb)
-        #echo fold((aa - bb), proc (k: int, v: bool, b: string): string = discard v; $k & ";" & b, "")
-        check(len(aa - bb) == 32)
-        check(len(bb - aa) == 32)
-        check(len(aa -+- bb) == 64)
-        check(len(bb -+- aa) == 64)
-        #let dd = (aa -+- bb)
-        # echo fold(dd, proc (k: int, v: bool, b: string): string = discard v; $k & ";" & b, "")
-        #for k,v in inorder(bb -+- aa):
-        #    check(k in dd)
-        check((bb -+- aa) =?= (aa -+- bb))
-        check((bb + aa) =?= (aa + bb))
-        check((bb * aa) =?= (aa * bb))
-        check(disjoint(bb * aa, aa -+- bb))
 
 suite "random stress test of bbtree.nim":
 

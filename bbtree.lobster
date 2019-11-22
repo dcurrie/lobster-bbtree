@@ -631,12 +631,13 @@ def symmetricDifference(tree1, tree2): // -> BBTree<K,V>
 def contains(root, key): // -> bool
     // Returns `true` if the `key` is in the tree `root`
     // otherwise `false`. O(log N)
-    var node = root
+    var node:BBTree? = root // why is type annotation needed to prevent (1) below? 
     while node:
         let dif = cmp(key, node.key)
         if dif < 0:
-            node = node.left
+            node = node.left // (1) error: "=" (right argument) requires type: BBTree, got: BBTree?
         else: if dif > 0:
+            assert(node) // why is this necessary after `while` test!?
             node = node.right
         else: // key and node.key are eq
             return true
@@ -687,7 +688,7 @@ def isSubset(tree1, tree2): // -> bool
     else: if len(tree1) > len(tree2):
         return false
     else:
-        // tree2 is not nil or else the above length test would have been true
+        assert(tree2) // tree2 is not nil or else the above length test would have been true
         let dif = cmp(tree1.key, tree2.key)
         if dif < 0:
             return isSubset(tree1.left, tree2.left) and
