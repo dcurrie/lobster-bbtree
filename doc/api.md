@@ -55,7 +55,7 @@ Note that `BBTree<K,V>` is intended to be an immutable opaque data structure.
 | HOF |
 |:---------------------|
 | **foldl**(root: BBTree<K,V>, base: T, f: (K,V,T)->T)) -> T |
-| Applies the function `f` to each key value pair of tree `root` in order (left ro right). Uses the `base` value for the first leftmost operand. So, for example, to construct a sum of the tree values, you could use ``foldl(root, 0): _a; _b + _c`` |
+| Applies the function `f` to each key value pair of tree `root` in order (left ro right). Uses the `base` value for the first leftmost operand. So, for example, to construct a sum of the tree values, you could use ``foldl(root, 0): _a; _b + _c`` and this will print the keys in order prefixed by "keys:" and separated by ":": `print(foldl(tree, "keys") k, v, b: v; concat_string([b, k],":"))` |
 | **foldr**(root: BBTree<K,V>, base: T, f: (K,V,T)->T)) -> T |
 | Applies the function `f` to each key value pair of tree `root` in reverse order (right to left). Uses the `base` value for the first rightmost operand. |
 | **foreach**(root: BBTree<K,V>, f: (K,V)->void) -> void |

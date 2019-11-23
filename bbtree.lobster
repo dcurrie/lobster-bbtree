@@ -454,7 +454,7 @@ def rank(root, key, rdefault: int) -> int:
 
 def foldr(root, base, f): // -> T // base: T, f: (K,V,T)->T,
     // Applies the function `f` to each key value pair of tree `root` in reverse order (right to left).
-    // Uses the `base` value for the first rightmost operand. So, for example, TODO
+    // Uses the `base` value for the first rightmost operand. So, for example TODO
     // Uses explicit stack.
     var result = base
     let stack = [] // : [BBTree<K,V>]
@@ -472,7 +472,9 @@ def foldr(root, base, f): // -> T // base: T, f: (K,V,T)->T,
 def foldl(root, base, f): // -> T // base: T, f: (K,V,T)->T,
     // Applies the function `f` to each key value pair of tree `root` in order (left ro right).
     // Uses the `base` value for the first leftmost operand. So, for example, to construct a
-    // sum of the tree values, you could use ``foldl(root, 0): _a; _b + _c``
+    // sum of the tree values, you could use ``foldl(root, 0): _a; _b + _c`` and this will print
+    // the  keys in order prefixed by "keys:" and separated by ":":
+    //    print(foldl(tree, "keys") k, v, b: v; concat_string([b, k],":"))
     // Uses explicit stack.
     var result = base
     let stack = [] // : [BBTree<K,V>]
@@ -869,16 +871,14 @@ def test1():
     //ok foldl(tre2, false): print(_k); true
     foreach(tre2): print(_); true
 
-    let f = def(k,v,b): concat_string([b,k],":")
-    print(foldl(tre2, "keys", f))
+    //let f = def(k,v,b): concat_string([b,k],":")
+    //print(foldl(tre2, "keys", f))
+    print(foldl(tre2, "keys") k, v, b: v; concat_string([b, k],":"))
 
     // segfault:
     // print(foldl(tre2, "keys"): def(k,v,b): concat_string([b,k],":"))
 
     print(foldl(tre2, 0): _a; _b + _c)
-
-    // args not ordered lexically as advertised
-    //print(foldl(tre2, ""): _b; concat_string([_c, _a],":"))
 
     let tre3 = del(tre2, "hello")
     print tre3
