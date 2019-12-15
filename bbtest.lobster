@@ -43,7 +43,7 @@ def return3oe(x):
 //        return 1, 2, 3
 
 run_test("hello world"):
-    let tre0 = nil::BBTree
+    let tre0 = nil::BBTree_s_i
     let tre1 = add(tre0, "hello", 1) // instantiate a BBTree with ("hello",1)
     let tre2 = add(tre1, "world", 2) // add ("world",2)
     //print tre2 //ok
@@ -75,7 +75,7 @@ run_test("getNth"):
     a, b, c = return3oe(1)
     assert(a == 1 and b == 2 and c == 3)
 
-    let tre0 = nil::BBTree
+    let tre0 = nil::BBTree_s_i
     let tre1 = tre0.add("hello", 1) // instantiate a BBTree with ("hello",1)
     let tre2 = tre1.add("world", 2) // add ("world",2)
 
@@ -95,10 +95,10 @@ run_test("getNth"):
 
 
 run_test("string sets"):
-    var aa = nil::BBTree
+    var aa = nil::BBTree_s_i
     //number_to_string(number:int, base:int, minchars:int) -> string
     for(99) i: aa = aa.add(number_to_string(i+1, 10, 5), true)
-    var bb = nil::BBTree
+    var bb = nil::BBTree_s_i
     for(99) i: bb = bb.add(number_to_string(i+33, 10, 5), true)
     let cc = intersection(aa, bb)
     assert(len(cc) == 67)
@@ -116,7 +116,7 @@ run_test("string sets"):
     assert(setEqual(union(bb, aa), union(aa, bb)))
     assert(setEqual(intersection(bb, aa), intersection(aa, bb)))
     assert(disjoint(intersection(bb, aa), symmetricDifference(aa, bb)))
-    let numbers = toSet(["1", "2", "3", "4", "5"])
+    let numbers = toSet<string,int>(["1", "2", "3", "4", "5"])
     assert(numbers.contains("2"))
     assert(numbers.contains("4"))
 
@@ -132,7 +132,7 @@ let chs = "0123456789_/abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 assert 64 == chs.length
 
-var tree:BBTree? = nil
+var tree:BBTree_s_i? = nil
 
 // vector_reserve(typeid:typeid, len:int) -> [any]
 
