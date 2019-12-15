@@ -42,22 +42,12 @@ Department of Applied Mathematics Charles University in Prague, Czech Republic
 // * Efficient set operations using tree keys
 // * Map extensions to set operations with optional value merge control for duplicates
 
-/* 
 class BBTree<K,V>: // BBTree is a generic type with keys and values of types K and V
     left:  BBTree?     // left subtree; may be nil
     right: BBTree?     // right subtree; may be nil
     size:  int         // the size of the (sub-)tree rooted in this node
     key:   K           // the search key; must support the generic ``cmp`` proc
     val:   V           // the data value associated with the key, and stored in a node
-*/
-// /*
-class BBTree: // BBTree is a generic type with keys and values of types K and V
-    left:  BBTree?     // left subtree; may be nil
-    right: BBTree?     // right subtree; may be nil
-    size:  int         // the size of the (sub-)tree rooted in this node
-    key:   string      // the search key; must support the generic ``cmp`` proc
-    val:   int         // the data value associated with the key, and stored in a node
-// */
 
 def cmp(x:int,   y:int)   -> int: return x - y
 
@@ -82,7 +72,6 @@ enum balance_criteria: // balance criteria
     alpha = 2
 
 def nodeSize(n:BBTree?) -> int: // n: BBTree[K,V]
-//def nodeSize(n) -> int: // n: BBTree<K,V>?
     if not n:
         return 0
     else:
@@ -150,7 +139,7 @@ def doubleR(left, key, value, right): // -> BBTree<K,V>
                      lr.val,
                      newNode(lr.right, key, value, right))
 
-def balance(left, key, value, right): // -> BBTree<K,V>
+def balance(left:BBTree?, key, value, right:BBTree?): // -> BBTree<K,V>
     let sl = nodeSize(left)
     let sr = nodeSize(right)
 
@@ -181,10 +170,10 @@ insert k (Node left _ key right) = case k ‘compare‘ key of
                                      GT -> balance left key (insert k right)
 */
 
-def add(root, key, value): // -> BBTree<K,V>
+def add<K,V>(root:BBTree<K,V>?, key, value) -> BBTree<K,V>:
     // Returns a new tree with the (`key`, `value`) pair added, or replaced if `key` is already
     // in the tree `root`. O(log N)
-    if root: // root != nil:
+    if root != nil:
         let dif = cmp(key, root.key)
         if (dif < 0):
             return balance(add(root.left, key, value), root.key, root.val, root.right)
@@ -394,7 +383,7 @@ def glue(left, right): // -> BBTree<K,V>
         let mink, minv, rightp = extractMin(right)
         return newNode(left, mink, minv, rightp)
 
-def del(root, key): // -> BBTree<K,V>
+def del<K,V>(root:BBTree<K,V>?, key:K) -> BBTree<K,V>?:
     // Deletes `key` from tree `root`. Does nothing if the key does not exist.
     // O(log N)
     if root:
@@ -458,7 +447,7 @@ def foldr(root, base, f): // -> T // base: T, f: (K,V,T)->T,
     // Uses explicit stack.
     var result = base
     let stack = [] // : [BBTree<K,V>]
-    var curr = root
+    var curr = root or nil
     while curr or length(stack) > 0:
         while (curr):
             push(stack, curr) // push node before going right
@@ -469,7 +458,7 @@ def foldr(root, base, f): // -> T // base: T, f: (K,V,T)->T,
         curr = curr.left // now go left
     return result
 
-def foldl(root, base, f): // -> T // base: T, f: (K,V,T)->T,
+def foldl(root:BBTree?, base, f): // -> T // base: T, f: (K,V,T)->T,
     // Applies the function `f` to each key value pair of tree `root` in order (left ro right).
     // Uses the `base` value for the first leftmost operand. So, for example, to construct a
     // sum of the tree values, you could use ``foldl(root, 0): _a; _b + _c`` and this will print
@@ -494,15 +483,15 @@ def foreach(root, f): // -> void // root: BBTree<K,V>, f: (K,V)->void
     // the results.
     foldl(root, false): f(_k,_v);false
 
-def map(root, f): // -> BBTree<K,T> // base: T, f: (K,V,T)->T,
-    // Returns a new tree with the keys of tree `root` and values that are the result of 
+def map<K,V>(root:BBTree<K,V>?, f) -> BBTree<K,V>?: // base: T, f: (K,V,T)->T,
+    // Returns a new tree with the keys of tree `root` and values that are the result of
     // applying `f` to each key and corresponding value. So, for example, TODO
     //
     // to construct a
     // tree with values replaced by concatenated string of key,value pairs, you could use
-    // 
+    //
     // .. code-block::
-    // 
+    //
     //     map(root, proc (k: int, v: int): string = $k & ":" & $v)
     if root:
         return newNode(map(root.left, f), root.key, f(root.key, root.val), map(root.right, f))
@@ -542,7 +531,7 @@ def join(left, right): // -> BBTree<K,V>
 
 // This is Adams's split_lt and split_gt combined into one function, along with contains(root, key)
 //
-def splitLtGt(key, root): // -> (BBTree[K,V], bool, BBTree[K,V])
+def splitLtGt<K,V>(key, root:BBTree<K,V>?) -> BBTree<K,V>?, bool, BBTree<K,V>?:
     if not root:
         return root, false, root
     else:
@@ -633,7 +622,7 @@ def symmetricDifference(tree1, tree2): // -> BBTree<K,V>
 def contains(root, key): // -> bool
     // Returns `true` if the `key` is in the tree `root`
     // otherwise `false`. O(log N)
-    var node:BBTree? = root // why is type annotation needed to prevent (1) below? 
+    var node = root or nil // needed because root may be non-nil.. or make it an explicit nil arg type.
     while node:
         let dif = cmp(key, node.key)
         if dif < 0:
@@ -645,12 +634,12 @@ def contains(root, key): // -> bool
             return true
     return false
 
-def intersection(tree1, tree2): // -> BBTree<K,V>
+def intersection<K,V>(tree1:BBTree<K,V>?, tree2:BBTree<K,V>?) -> BBTree<K,V>?:
     // Returns the set intersection of `tree1` and `tree2`. In other words, returns the keys
-    // that are in both trees. 
-    // When viewed as maps, returns the key,value pairs for keys that appear in both trees; 
+    // that are in both trees.
+    // When viewed as maps, returns the key,value pairs for keys that appear in both trees;
     // the value each key is selected from `tree1`, so
-    // this function is asymmetrical for maps. If you need more comtrol over how the 
+    // this function is asymmetrical for maps. If you need more comtrol over how the
     // values are selected for duplicate keys, see `intersectionMerge`. O(M + N)
     if not tree1:
         return tree1
@@ -781,14 +770,14 @@ def setEqual(tree1, tree2): // -> bool
 /* **************************** convenience funcs ********************************
 */
 
-def toSet(keys): // -> BBTree<K,bool>
+def toSet<K,V>(keys:[K]): // -> BBTree<K,bool>
   // Creates a BBTree set that contains the given `keys` with value `true`.
   //
   // Example:
   //   let numbers = toSet(["1", "2", "3", "4", "5"])
   //   assert(numbers.contains("2"))
   //   assert(numbers.contains("4"))
-  var result:BBTree? = nil
+  var result = nil::BBTree<K,V>
   for(keys) key: result = add(result, key, true)
   return result
 
@@ -859,14 +848,14 @@ def isBalanced(root) -> bool:
 //     echo "done"
 
 
+class BBTree_s_i = BBTree<string,int>
+
 def test1():
-    //class BBTree_s_i = BBTree<string,int>
-    //let tre0 = nil::BBTree_s_i //ng
-    let tre0 = nil::BBTree
+    let tre0 = nil::BBTree_s_i //ng
     let tre1 = add(tre0, "hello", 1) // instantiate a BBTree with ("hello",1)
     let tre2 = add(tre1, "world", 2) // add ("world",2)
     //print tre2 //ok
-    map(tre2): print(_k); print(_v); true
+    map(tre2): print(_k); print(_v); 1
     //ok foldr(tre2, false): print(_k); true
     //ok foldl(tre2, false): print(_k); true
     foreach(tre2): print(_); true
