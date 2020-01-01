@@ -1,19 +1,19 @@
 /*
 Copyright (c) 2012-19 Doug Currie, Londonderry, NH, USA
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
-and associated documentation files (the "Software"), to deal in the Software without 
-restriction, including without limitation the rights to use, copy, modify, merge, publish, 
-distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the 
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+and associated documentation files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
 Software is furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or 
+The above copyright notice and this permission notice shall be included in all copies or
 substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING 
-BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
-DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
@@ -32,7 +32,7 @@ Department of Applied Mathematics Charles University in Prague, Czech Republic
 */
 
 // Bounded Balance Trees a.k.a. Weight Balanced Trees
-// 
+//
 // a persistent data structure providing a generic (parameterized) key,value map
 //
 // * Insert (``add``), lookup (``get``), and delete (``del``) in O(log(N)) time
@@ -71,7 +71,7 @@ enum balance_criteria: // balance criteria
     omega = 3
     alpha = 2
 
-def nodeSize(n:BBTree?) -> int: // n: BBTree[K,V]
+def nodeSize<K,V>(n:BBTree<K,V>?) -> int:
     if not n:
         return 0
     else:
@@ -112,16 +112,16 @@ balance left key right
 
 def singleL(left, key, value, right): // -> BBTree<K,V>
     return newNode(newNode(left, key, value, right.left),
-                        right.key, 
-                        right.val, 
+                        right.key,
+                        right.val,
                         right.right)
 
 def doubleL(left, key, value, right): // -> BBTree<K,V>
     let rl = right.left
     assert rl
     return newNode(newNode(left, key, value, rl.left),
-                     rl.key, 
-                     rl.val, 
+                     rl.key,
+                     rl.val,
                      newNode(rl.right, right.key, right.val, right.right))
 
 
@@ -139,7 +139,7 @@ def doubleR(left, key, value, right): // -> BBTree<K,V>
                      lr.val,
                      newNode(lr.right, key, value, right))
 
-def balance(left:BBTree?, key, value, right:BBTree?): // -> BBTree<K,V>
+def balance<K,V>(left:BBTree<K,V>?, key, value, right:BBTree<K,V>?): // -> BBTree<K,V>
     let sl = nodeSize(left)
     let sr = nodeSize(right)
 
@@ -212,7 +212,7 @@ def add<K,V>(root:BBTree<K,V>?, key, value) -> BBTree<K,V>:
 */
 
 def get(root, key, vdefault): // -> V
-    // Retrieves the value for `key` in the tree `root` iff `key` is in the tree. 
+    // Retrieves the value for `key` in the tree `root` iff `key` is in the tree.
     // Otherwise, `vdefault` is returned. O(log N)
     var node = root
     while node:
@@ -226,8 +226,8 @@ def get(root, key, vdefault): // -> V
     return vdefault
 
 def getNth(root, index: int, kdefault, vdefault): // -> K, V
-    // Get the key,value pair of the 0-based `index` key in the tree `root` when index is 
-    // positive and less than the tree length. Or get the tree length plus `index` key in 
+    // Get the key,value pair of the 0-based `index` key in the tree `root` when index is
+    // positive and less than the tree length. Or get the tree length plus `index` key in
     // the tree `root` when the `index` is negative and greater than the negative tree length.
     // Otherwise, `kdefault, vdefault` is returned. O(log N)
     let treesize = nodeSize(root)
@@ -352,10 +352,10 @@ delete k (Node left _ key right) = case k ‘compare‘ key of
 //        let mink, minv, nodep = extractMin(node.left)
 //        return mink, minv, balance(nodep, node.key, node.val, node.right)
 //    else: return node.key, node.val, node.right
-def extractMin(node:BBTree): // -> mink, minv, node' : K, V, BBTree[K,V]
+def extractMin<K,V>(node:BBTree<K,V>): // -> mink, minv, node' : K, V, BBTree[K,V]
     if not node.left:
         return node.key, node.val, node.right
-    else: 
+    else:
         let mink, minv, nodep = extractMin(node.left)
         return mink, minv, balance(nodep, node.key, node.val, node.right)
 
@@ -364,10 +364,10 @@ def extractMin(node:BBTree): // -> mink, minv, node' : K, V, BBTree[K,V]
 //        let maxk, maxv, nodep = extractMax(node.right)
 //        return maxk, maxv, balance(node.left, node.key, node.val, nodep)
 //    else: return node.key, node.val, node.left
-def extractMax(node:BBTree): // -> maxk, maxv, node' : K, V, BBTree[K,V]
+def extractMax<K,V>(node:BBTree<K,V>): // -> maxk, maxv, node' : K, V, BBTree[K,V]
     if not node.right:
         return node.key, node.val, node.left
-    else: 
+    else:
         let maxk, maxv, nodep = extractMax(node.right)
         return maxk, maxv, balance(node.left, node.key, node.val, nodep)
 
@@ -421,7 +421,7 @@ def delMax(root): // -> BBTree<K,V>
 */
 
 def rank(root, key, rdefault: int) -> int:
-    // Retrieves the 0-based index of `key` in the tree `root` iff `key` is in the tree. 
+    // Retrieves the 0-based index of `key` in the tree `root` iff `key` is in the tree.
     // Otherwise, `rdefault` is returned. O(log N)
     var result = rdefault
     var n = 0
@@ -458,7 +458,7 @@ def foldr(root, base, f): // -> T // base: T, f: (K,V,T)->T,
         curr = curr.left // now go left
     return result
 
-def foldl(root:BBTree?, base, f): // -> T // base: T, f: (K,V,T)->T,
+def foldl<K,V>(root:BBTree<K,V>?, base, f): // -> T // base: T, f: (K,V,T)->T,
     // Applies the function `f` to each key value pair of tree `root` in order (left ro right).
     // Uses the `base` value for the first leftmost operand. So, for example, to construct a
     // sum of the tree values, you could use ``foldl(root, 0): _a; _b + _c`` and this will print
@@ -564,9 +564,9 @@ def union(tree1, tree2): // -> BBTree<K,V>
     // Returns the union of the sets represented by the keys in `tree1` and `tree2`.
     // When viewed as maps, returns the key,value pairs that appear in either tree; if
     // a key appears in both trees, the value for that key is selected from `tree1`, so
-    // this function is asymmetrical for maps. If you need more comtrol over how the 
+    // this function is asymmetrical for maps. If you need more comtrol over how the
     // values are selected for duplicate keys, see `unionMerge`. O(M + N) but if the minimum
-    // key of one tree is greater than the maximum key of the other tree then O(log M) 
+    // key of one tree is greater than the maximum key of the other tree then O(log M)
     // where M is the size of the larger tree.
     if not tree1:
         return tree2
@@ -581,9 +581,9 @@ def unionMerge(tree1, tree2, merge): // merge: (K,V,V)->V // -> BBTree<K,V>
     // Returns the union of the sets represented by the keys in `tree1` and `tree2`.
     // When viewed as maps, returns the key,value pairs that appear in either tree; if
     // a key appears in both trees, the value for that key is the result of the supplied
-    // `merge` function, which is passed the common key, and the values from `tree1` and 
+    // `merge` function, which is passed the common key, and the values from `tree1` and
     // `tree2` respectively.  O(M + N) but if the minimum
-    // key of one tree is greater than the maximum key of the other tree then O(log M) 
+    // key of one tree is greater than the maximum key of the other tree then O(log M)
     // where M is the size of the larger tree.
     if not tree1:
         return tree2
@@ -595,7 +595,7 @@ def unionMerge(tree1, tree2, merge): // merge: (K,V,V)->V // -> BBTree<K,V>
         return join(tree1.key, v, unionMerge(tree1.left, l, merge), unionMerge(tree1.right, r, merge))
 
 def difference(tree1, tree2): // -> BBTree<K,V>
-    // Returns the asymmetric set difference between `tree1` and `tree2`. In other words, 
+    // Returns the asymmetric set difference between `tree1` and `tree2`. In other words,
     // returns the keys that are in `tree1`, but not in `tree2`.  O(M + N)
     if not tree1 or not tree2:
         return tree1
@@ -605,8 +605,8 @@ def difference(tree1, tree2): // -> BBTree<K,V>
         return join(difference(l, tree2.left), difference(r, tree2.right))
 
 def symmetricDifference(tree1, tree2): // -> BBTree<K,V>
-    // Returns the symmetric set difference between `tree1` and `tree2`. In other words, 
-    // returns the keys that are in `tree1`, but not in `tree2`, union the keys that are in 
+    // Returns the symmetric set difference between `tree1` and `tree2`. In other words,
+    // returns the keys that are in `tree1`, but not in `tree2`, union the keys that are in
     // `tree2` but not in `tree1`.  O(M + N)
     if not tree1:
         return tree2
@@ -654,10 +654,10 @@ def intersection<K,V>(tree1:BBTree<K,V>?, tree2:BBTree<K,V>?) -> BBTree<K,V>?:
 
 def intersectionMerge(tree1, tree2, merge): // merge: (K,V,V)->V // -> BBTree<K,V>
     // Returns the set intersection of `tree1` and `tree2`. In other words, returns the keys
-    // that are in both trees. 
-    // When viewed as maps, returns the key,value pairs for keys that appear in both trees; 
+    // that are in both trees.
+    // When viewed as maps, returns the key,value pairs for keys that appear in both trees;
     // the value for each key is the result of the supplied
-    // `merge` function, which is passed the common key, and the values from `tree1` and 
+    // `merge` function, which is passed the common key, and the values from `tree1` and
     // `tree2` respectively.  O(M + N)
     if not tree1:
         return tree1
@@ -671,7 +671,7 @@ def intersectionMerge(tree1, tree2, merge): // merge: (K,V,V)->V // -> BBTree<K,
             return join(intersectionMerge(tree1.left, l, merge), intersectionMerge(tree1.right, r, merge))
 
 def isSubset(tree1, tree2): // -> bool
-    // Returns true iff the keys in `tree1` form a subset of the keys in `tree2`. In other words, 
+    // Returns true iff the keys in `tree1` form a subset of the keys in `tree2`. In other words,
     // if all the keys that are in `tree1` are also in `tree2`. O(N) where N is `len(tree1)`
     // Use `isProperSubset` instead to determins that there are keys in `tree2` that are not in `tree1`.
     if not tree1:
@@ -687,7 +687,7 @@ def isSubset(tree1, tree2): // -> bool
                      isSubset(tree1.right, tree2)
         else: if dif > 0:
             return isSubset(tree1.right, tree2.right) and
-                     tree2.contains(tree1.key) and 
+                     tree2.contains(tree1.key) and
                      isSubset(tree1.left, tree2)
         else: // tree1.key and tree2.key are eq
             return isSubset(tree1.left, tree2.left) and isSubset(tree1.right, tree2.right)
@@ -703,7 +703,7 @@ def disjoint(tree1, tree2): // -> bool
             return disjoint(tree1.right, tree2)
         else: if dif > 0:
             if not disjoint(tree1.right, tree2.right): return false
-            if tree2.contains(tree1.key): return false 
+            if tree2.contains(tree1.key): return false
             return disjoint(tree1.left, tree2)
         else: // tree1.key and tree2.key are eq
             return false
@@ -711,8 +711,8 @@ def disjoint(tree1, tree2): // -> bool
         return true // default
 
 def isProperSubset(tree1, tree2): // -> bool
-    // Returns true iff the keys in `tree1` form a proper subset of the keys in `tree2`. 
-    // In other words, if all the keys that are in `tree1` are also in `tree2`, but there are 
+    // Returns true iff the keys in `tree1` form a proper subset of the keys in `tree2`.
+    // In other words, if all the keys that are in `tree1` are also in `tree2`, but there are
     // keys in `tree2` that are not in `tree1`.  O(N) where N is `len(tree1)`
     return isSubset(tree1, tree2) and len(tree1) < len(tree2)
 
@@ -723,21 +723,21 @@ def setEqual(tree1, tree2): // -> bool
 // def `+`(s1, s2): // -> BBTree[K,V]
 //     // Alias for `union(s1, s2) <#union,BBTree[K,V],BBTree[K,V]>`_.
 //     return union(s1, s2)
-// 
+//
 // def `*`(s1, s2): // -> BBTree[K,V]
 //     // Alias for `intersection(s1, s2) <#intersection,BBTree[K,V],BBTree[K,V]>`_.
 //     return intersection(s1, s2)
-// 
+//
 // def `-`(s1, s2): // -> BBTree[K,V]
 //     // Alias for `difference(s1, s2) <#difference,BBTree[K,V],BBTree[K,V]>`_.
 //     return difference(s1, s2)
-// 
+//
 // // A -+- B  ==  (A - B) + (B - A)  ==  (A + B) - (A * B)
-// 
+//
 // def `-+-`(s1, s2): // -> BBTree[K,V]
 //     // Alias for `symmetricDifference(s1, s2) <#symmetricDifference,BBTree[K,V],BBTree[K,V]>`_.
 //     return symmetricDifference(s1, s2)
-// 
+//
 // def `<`(s1: BBTree[K,U], s2): // -> bool
 //     // Alias for `isProperSubset(s1, s2) <#isProperSubset,BBTree[K,U],BBTree[K,V]>`_.
 //     // Returns true if the keys in `s1` form a strict or proper subset of the keys in `s2`.
@@ -745,7 +745,7 @@ def setEqual(tree1, tree2): // -> bool
 //     // A strict or proper subset `s1` has all of its keys in `s2` but `s2` has
 //     // more elements than `s1`.
 //     return isProperSubset(s1, s2)
-// 
+//
 // def `<=`(s1: BBTree[K,U], s2): // -> bool
 //     // Alias for `isSubset(s1, s2) <#isSubset,BBTree[K,U],BBTree[K,V]>`_.
 //     // Returns true if `s1` is subset of `s2`.
@@ -753,7 +753,7 @@ def setEqual(tree1, tree2): // -> bool
 //     // A subset `s1` has all of its members in `ts2` and `s2` doesn't necessarily
 //     // have more members than `s1`. That is, `s1` can be equal to `s2`.
 //     return isSubset(s1, s2)
-// 
+//
 // /*
 // //  `==` seems like an extreme assertion when values are not being considered...
 // //  but this would be consistent with Nim's set API. Punt for now; use =?= instead.
@@ -811,7 +811,7 @@ def balanced(node) -> int: // returns size in nodes or -1 for error
         else: if sl > (omega * sr):
             // fprintf(stderr, "Error in bbwatree balanced: sl %u > omega * %u\n", sl, sr);
             return -1
-        
+
         let slb = balanced(node.left)
         let srb = balanced(node.right)
         if (slb < 0) or (sl != slb):
@@ -822,7 +822,7 @@ def balanced(node) -> int: // returns size in nodes or -1 for error
             return -1
         return sz
     else:
-        return 0        
+        return 0
 
 def isBalanced(root) -> bool:
     // Used for unit testing only; returns `true` if the tree is balanced, which should always
@@ -836,7 +836,7 @@ def isBalanced(root) -> bool:
 */
 
 // when isMainModule:
-// 
+//
 //     proc test1() =
 //         var
 //             tre0 : BBTree[string,int] = nil
