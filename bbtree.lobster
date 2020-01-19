@@ -81,14 +81,14 @@ def len(root) -> int:
     // Returns the number of keys in tree at `root`.  O(1)
     return nodeSize(root)
 
-def newLeaf(key, value): // -> BBTree<K,V>
+def newLeaf<K,V>(key:K, value:V) -> BBTree<K,V>:
     // constructor for a leaf node
-    return BBTree { left: nil, right: nil, size: 1, key: key, val: value }
+    return BBTree<K,V> { left: nil, right: nil, size: 1, key: key, val: value }
 
-def newNode(left, key, value, right): // -> BBTree<K,V>
+def newNode<K,V>(left:BBTree<K,V>?, key:K, value:V, right:BBTree<K,V>?) -> BBTree<K,V>:
     // constructor for a new node
     let size = nodeSize(left) + 1 + nodeSize(right)
-    return BBTree { left: left, right: right, size: size, key: key, val: value }
+    return BBTree<K,V> { left: left, right: right, size: size, key: key, val: value }
 
 /* **************************** balance ********************************
 //
@@ -139,7 +139,7 @@ def doubleR(left, key, value, right): // -> BBTree<K,V>
                      lr.val,
                      newNode(lr.right, key, value, right))
 
-def balance<K,V>(left:BBTree<K,V>?, key, value, right:BBTree<K,V>?): // -> BBTree<K,V>
+def balance<K,V>(left:BBTree<K,V>?, key:K, value:V, right:BBTree<K,V>?) -> BBTree<K,V>:
     let sl = nodeSize(left)
     let sr = nodeSize(right)
 
@@ -835,23 +835,8 @@ def isBalanced(root) -> bool:
 /* ***************************** sanity check ********************************
 */
 
-// when isMainModule:
-//
-//     proc test1() =
-//         var
-//             tre0 : BBTree[string,int] = nil
-//             tre1 = add(tre0, "hello", 1) // instantiate a BBTree with ("hello",1)
-//             tre2 = add(tre1, "world", 1) // add ("world",2)
-//         for str,num in inorder(tre2):
-//             stdout.writeLine(str)
-//     test1()
-//     echo "done"
-
-
-class BBTree_s_i = BBTree<string,int>
-
 def test1():
-    let tre0 = nil::BBTree_s_i //ng
+    let tre0 = nil::BBTree<string,int>
     let tre1 = add(tre0, "hello", 1) // instantiate a BBTree with ("hello",1)
     let tre2 = add(tre1, "world", 2) // add ("world",2)
     //print tre2 //ok
