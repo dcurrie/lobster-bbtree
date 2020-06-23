@@ -8,13 +8,13 @@ import bbtree
 def isOrdered(root, minn:string) -> bool:
     var last = minn
     // foldl is inorder
-    let folder = def(k,v): if last == minn or cmp(last, k) < 0: last = k; true else: false
+    let folder = fn(k,v): if last == minn or cmp(last, k) < 0: last = k; true else: false
     return foldl(root, true, folder)
 
 def isOrderedR(root, maxx:string) -> bool:
     var last = maxx
     // foldr is revorder
-    let folder = def(k,v): if last == maxx or cmp(last, k) > 0: last = k; true else: false
+    let folder = fn(k,v): if last == maxx or cmp(last, k) > 0: last = k; true else: false
     return foldr(root, true, folder)
 
 def returner():
@@ -30,7 +30,7 @@ def return3o2(x):
         return 9, 8, 7
 
 // ok...
-def return3oe(x):
+def return3oe(x) -> int, int, int:
     if x <= 0:
         return 1, 2, 3
     else:
@@ -49,8 +49,8 @@ run_test("hello world"):
     //print tre2 //ok
 
     let res = []
-    map(tre2, def(k,v): push(res, k); true)
-    foldr(tre2, false, def(k,v): push(res, k); true)
+    map(tre2, fn(k,v): push(res, k); true)
+    foldr(tre2, false, fn(k,v): push(res, k); true)
     assert (concat_string(res," ") == "hello world world hello")
 
     assert isOrdered(tre2, "")
@@ -266,7 +266,8 @@ def outerlp():
             trees.push(tree)
             sizes.push(tree.len)
 
-def for2(xs, ys, fun): return for xs.length: fun(xs[_], ys[_])
+def for2(xs, ys, fun):
+    for xs.length: fun(xs[_], ys[_])
 
 def persistent_p():
     assert(trees.length == sizes.length)
