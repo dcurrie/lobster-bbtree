@@ -546,7 +546,7 @@ def splitLtGt<K,V>(key:K, root:BBTree<K,V>?) -> BBTree<K,V>?, bool, BBTree<K,V>?
             return root.left, true, root.right
 
 def splitMerge<K,V>(key:K, val:V, root:BBTree<K,V>?, merge) -> BBTree<K,V>?, bool, V, BBTree<K,V>?:
-    // -> (BBTree[K,V], bool, V, BBTree[K,V]) =
+    // merge: (K,V,V)->V
     if not root:
         return root, false, val, root
     else:
@@ -578,6 +578,7 @@ def union<K,V>(tree1:BBTree<K,V>?, tree2:BBTree<K,V>?)-> BBTree<K,V>?:
         return join(tree1.key, tree1.val, union(tree1.left, l), union(tree1.right, r))
 
 def unionMerge<K,V>(tree1:BBTree<K,V>?, tree2:BBTree<K,V>?, merge) -> BBTree<K,V>?:
+    // merge: (K,V,V)->V
     // Returns the union of the sets represented by the keys in `tree1` and `tree2`.
     // When viewed as maps, returns the key,value pairs that appear in either tree; if
     // a key appears in both trees, the value for that key is the result of the supplied
@@ -653,6 +654,7 @@ def intersection<K,V>(tree1:BBTree<K,V>?, tree2:BBTree<K,V>?) -> BBTree<K,V>?:
             return join(intersection(tree1.left, l), intersection(tree1.right, r))
 
 def intersectionMerge<K,V>(tree1:BBTree<K,V>?, tree2:BBTree<K,V>?, merge) -> BBTree<K,V>?:
+    // merge: (K,V,V)->V
     // Returns the set intersection of `tree1` and `tree2`. In other words, returns the keys
     // that are in both trees.
     // When viewed as maps, returns the key,value pairs for keys that appear in both trees;
