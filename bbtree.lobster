@@ -54,7 +54,7 @@ def cmp(x:int,   y:int)   -> int: return x - y
 def cmp(x:float, y:float) -> int:
     if x < y:
         return -1
-    else: if x > y:
+    elif x > y:
         return 1
     else:
         return 0
@@ -62,7 +62,7 @@ def cmp(x:float, y:float) -> int:
 def cmp(x:string, y:string) -> int:
     if x < y:
         return -1
-    else: if x > y:
+    elif x > y:
         return 1
     else:
         return 0
@@ -145,13 +145,13 @@ def balance<K,V>(left:BBTree<K,V>?, key:K, value:V, right:BBTree<K,V>?) -> BBTre
 
     if ((sl + sr) <= 1):
         return newNode(left, key, value, right)
-    else: if (sr > (omega * sl)):
+    elif (sr > (omega * sl)):
         assert right
         if (nodeSize(right.left) < (alpha * nodeSize(right.right))):
             return singleL(left, key, value, right)
         else:
             return doubleL(left, key, value, right)
-    else: if (sl > (omega * sr)):
+    elif (sl > (omega * sr)):
         assert left
         if (nodeSize(left.right) < (alpha * nodeSize(left.left))):
             return singleR(left, key, value, right)
@@ -177,7 +177,7 @@ def add<K,V>(root:BBTree<K,V>?, key, value) -> BBTree<K,V>:
         let dif = cmp(key, root.key)
         if (dif < 0):
             return balance(add(root.left, key, value), root.key, root.val, root.right)
-        else: if (dif > 0):
+        elif (dif > 0):
             return balance(root.left, root.key, root.val, add(root.right, key, value))
         else: // key and root.key are equal
             //if (value == root.val)
@@ -199,7 +199,7 @@ def add<K,V>(root:BBTree<K,V>?, key, value) -> BBTree<K,V>:
 //        let dif = cmp(key, root.key)
 //        if (dif < 0):
 //            return balance(add(root.left, key, value), root.key, root.val, root.right)
-//        else: if (dif > 0):
+//        elif (dif > 0):
 //            return balance(root.left, root.key, root.val, add(root.right, key, value))
 //        else: // key and root.key are equal
 //            //if (value == root.val)
@@ -219,7 +219,7 @@ def get(root, key, vdefault): // -> V
         let dif = cmp(key, node.key)
         if dif < 0:
             if node.left: node = node.left else: return vdefault
-        else: if dif > 0:
+        elif dif > 0:
             if node.right: node = node.right else: return vdefault
         else: // key and node.key are eq
             return node.val
@@ -242,7 +242,7 @@ def getNth(root, index: int, kdefault, vdefault): // -> K, V
             let leftsize = nodeSize(node.left)
             if uindex < leftsize and node.left:
                 node = node.left
-            else: if uindex > leftsize and node.right:
+            elif uindex > leftsize and node.right:
                 uindex -= (leftsize + 1)
                 node = node.right
             else: // we are there!
@@ -292,7 +292,7 @@ def getNext(root, key, kdefault, vdefault): // -> K, V
             if (dif < 0):
                 last_left_from = node
                 node = node.left
-            else: if (dif > 0):
+            elif (dif > 0):
                 node = node.right
             else: // key and node.key are eq
                 // return value from min node of right subtree, or from last_left_from if none
@@ -314,7 +314,7 @@ def getPrev(root, key, kdefault, vdefault): // -> KV<K,V>
             let dif = cmp(key, node.key)
             if (dif < 0):
                 node = node.left
-            else: if (dif > 0):
+            elif (dif > 0):
                 last_right_from = node
                 node = node.right
             else: // key and node.key are eq
@@ -352,7 +352,7 @@ delete k (Node left _ key right) = case k ‘compare‘ key of
 //        let mink, minv, nodep = extractMin(node.left)
 //        return mink, minv, balance(nodep, node.key, node.val, node.right)
 //    else: return node.key, node.val, node.right
-def extractMin<K,V>(node:BBTree<K,V>): // -> mink, minv, node' : K, V, BBTree[K,V]
+def extractMin<K,V>(node:BBTree<K,V>) -> K, V, BBTree<K,V>?:
     if not node.left:
         return node.key, node.val, node.right
     else:
@@ -364,7 +364,7 @@ def extractMin<K,V>(node:BBTree<K,V>): // -> mink, minv, node' : K, V, BBTree[K,
 //        let maxk, maxv, nodep = extractMax(node.right)
 //        return maxk, maxv, balance(node.left, node.key, node.val, nodep)
 //    else: return node.key, node.val, node.left
-def extractMax<K,V>(node:BBTree<K,V>): // -> maxk, maxv, node' : K, V, BBTree[K,V]
+def extractMax<K,V>(node:BBTree<K,V>) -> K, V, BBTree<K,V>?:
     if not node.right:
         return node.key, node.val, node.left
     else:
@@ -374,9 +374,9 @@ def extractMax<K,V>(node:BBTree<K,V>): // -> maxk, maxv, node' : K, V, BBTree[K,
 def glue(left, right): // -> BBTree<K,V>
     if not left:
         return right
-    else: if not right:
+    elif not right:
         return left
-    else: if nodeSize(left) > nodeSize(right):
+    elif nodeSize(left) > nodeSize(right):
         let maxk, maxv, leftp = extractMax(left)
         return newNode(leftp, maxk, maxv, right)
     else:
@@ -390,7 +390,7 @@ def del<K,V>(root:BBTree<K,V>?, key:K) -> BBTree<K,V>?:
         let dif = cmp(key, root.key)
         if (dif < 0):
             return balance(del(root.left, key), root.key, root.val, root.right)
-        else: if (dif > 0):
+        elif (dif > 0):
             return balance(root.left, root.key, root.val, del(root.right, key))
         else: // key and root.key are eq
             return glue(root.left, root.right)
@@ -430,7 +430,7 @@ def rank(root, key, rdefault: int) -> int:
         let dif = cmp(key, node.key)
         if (dif < 0):
             node = node.left
-        else: if (dif > 0):
+        elif (dif > 0):
             n += 1 + nodeSize(node.left)
             node = node.right
         else: // key and node.key are eq
@@ -503,27 +503,27 @@ def map<K,V>(root:BBTree<K,V>?, f) -> BBTree<K,V>?: // base: T, f: (K,V,T)->T,
 
 // This is Adams's concat3
 //
-def join(key, val, left, right): // -> BBTree<K,V>
+def join<K,V>(key:K, val:V, left, right) -> BBTree<K,V>:
     if not left:
         return add(right, key, val)
-    else: if not right:
+    elif not right:
         return add(left, key, val)
     else:
         let sl = nodeSize(left)
         let sr = nodeSize(right)
         if (omega * sl) < sr:
             return balance(join(key, val, left, right.left), right.key, right.val, right.right)
-        else: if (omega * sr) < sl:
+        elif (omega * sr) < sl:
             return balance(left.left, left.key, left.val, join(key, val, left.right, right))
         else:
             return newNode(left, key, val, right)
 
 // This is Adams's concat
 //
-def join(left, right): // -> BBTree<K,V>
+def join<K,V>(left:BBTree<K,V>?, right:BBTree<K,V>?) -> BBTree<K,V>?:
     if not left:
         return right
-    else: if not right:
+    elif not right:
         return left
     else:
         let key, val, rightp = extractMin(right)
@@ -531,7 +531,7 @@ def join(left, right): // -> BBTree<K,V>
 
 // This is Adams's split_lt and split_gt combined into one function, along with contains(root, key)
 //
-def splitLtGt<K,V>(key, root:BBTree<K,V>?) -> BBTree<K,V>?, bool, BBTree<K,V>?:
+def splitLtGt<K,V>(key:K, root:BBTree<K,V>?) -> BBTree<K,V>?, bool, BBTree<K,V>?:
     if not root:
         return root, false, root
     else:
@@ -539,13 +539,13 @@ def splitLtGt<K,V>(key, root:BBTree<K,V>?) -> BBTree<K,V>?, bool, BBTree<K,V>?:
         if dif < 0:
             let l, b, r = splitLtGt(key, root.left)
             return l, b, join(root.key, root.val, r, root.right)
-        else: if dif > 0:
+        elif dif > 0:
             let l, b, r = splitLtGt(key, root.right)
             return join(root.key, root.val, root.left, l), b, r
         else: // key and node.key are eq
             return root.left, true, root.right
 
-def splitMerge(key, val, root, merge): // merge: proc (k, v1, v2)
+def splitMerge<K,V>(key:K, val:V, root:BBTree<K,V>?, merge) -> BBTree<K,V>?, bool, V, BBTree<K,V>?:
     // -> (BBTree[K,V], bool, V, BBTree[K,V]) =
     if not root:
         return root, false, val, root
@@ -554,13 +554,13 @@ def splitMerge(key, val, root, merge): // merge: proc (k, v1, v2)
         if dif < 0:
             let l, b, v, r = splitMerge(key, val, root.left, merge)
             return l, b, v, join(root.key, root.val, r, root.right)
-        else: if dif > 0:
+        elif dif > 0:
             let l, b, v, r = splitMerge(key, val, root.right, merge)
             return join(root.key, root.val, root.left, l), b, v, r
         else: // key and node.key are eq
             return root.left, true, merge(key, val, root.val), root.right
 
-def union(tree1, tree2): // -> BBTree<K,V>
+def union<K,V>(tree1:BBTree<K,V>?, tree2:BBTree<K,V>?)-> BBTree<K,V>?:
     // Returns the union of the sets represented by the keys in `tree1` and `tree2`.
     // When viewed as maps, returns the key,value pairs that appear in either tree; if
     // a key appears in both trees, the value for that key is selected from `tree1`, so
@@ -570,14 +570,14 @@ def union(tree1, tree2): // -> BBTree<K,V>
     // where M is the size of the larger tree.
     if not tree1:
         return tree2
-    else: if not tree2:
+    elif not tree2:
         return tree1
     else:
         let l, b, r = splitLtGt(tree1.key, tree2)
         // discard b
         return join(tree1.key, tree1.val, union(tree1.left, l), union(tree1.right, r))
 
-def unionMerge(tree1, tree2, merge): // merge: (K,V,V)->V // -> BBTree<K,V>
+def unionMerge<K,V>(tree1:BBTree<K,V>?, tree2:BBTree<K,V>?, merge) -> BBTree<K,V>?:
     // Returns the union of the sets represented by the keys in `tree1` and `tree2`.
     // When viewed as maps, returns the key,value pairs that appear in either tree; if
     // a key appears in both trees, the value for that key is the result of the supplied
@@ -587,14 +587,14 @@ def unionMerge(tree1, tree2, merge): // merge: (K,V,V)->V // -> BBTree<K,V>
     // where M is the size of the larger tree.
     if not tree1:
         return tree2
-    else: if not tree2:
+    elif not tree2:
         return tree1
     else:
         let l, b, v, r = splitMerge(tree1.key, tree1.val, tree2, merge)
         // discard b
         return join(tree1.key, v, unionMerge(tree1.left, l, merge), unionMerge(tree1.right, r, merge))
 
-def difference(tree1, tree2): // -> BBTree<K,V>
+def difference<K,V>(tree1:BBTree<K,V>?, tree2:BBTree<K,V>?) -> BBTree<K,V>?:
     // Returns the asymmetric set difference between `tree1` and `tree2`. In other words,
     // returns the keys that are in `tree1`, but not in `tree2`.  O(M + N)
     if not tree1 or not tree2:
@@ -604,13 +604,13 @@ def difference(tree1, tree2): // -> BBTree<K,V>
         // discard b
         return join(difference(l, tree2.left), difference(r, tree2.right))
 
-def symmetricDifference(tree1, tree2): // -> BBTree<K,V>
+def symmetricDifference<K,V>(tree1:BBTree<K,V>?, tree2:BBTree<K,V>?) -> BBTree<K,V>?:
     // Returns the symmetric set difference between `tree1` and `tree2`. In other words,
     // returns the keys that are in `tree1`, but not in `tree2`, union the keys that are in
     // `tree2` but not in `tree1`.  O(M + N)
     if not tree1:
         return tree2
-    else: if not tree2:
+    elif not tree2:
         return tree1
     else:
         let l, b, r = splitLtGt(tree2.key, tree1)
@@ -619,15 +619,15 @@ def symmetricDifference(tree1, tree2): // -> BBTree<K,V>
         else:
             return join(tree2.key, tree2.val, symmetricDifference(l, tree2.left), symmetricDifference(r, tree2.right))
 
-def contains(root, key): // -> bool
+def contains<K,V>(root:BBTree<K,V>?, key:K) -> bool:
     // Returns `true` if the `key` is in the tree `root`
     // otherwise `false`. O(log N)
-    var node = root or nil // needed because root may be non-nil.. or make it an explicit nil arg type.
+    var node = root
     while node:
         let dif = cmp(key, node.key)
         if dif < 0:
             node = node.left // (1) error: "=" (right argument) requires type: BBTree, got: BBTree?
-        else: if dif > 0:
+        elif dif > 0:
             assert(node) // why is this necessary after `while` test!?
             node = node.right
         else: // key and node.key are eq
@@ -643,7 +643,7 @@ def intersection<K,V>(tree1:BBTree<K,V>?, tree2:BBTree<K,V>?) -> BBTree<K,V>?:
     // values are selected for duplicate keys, see `intersectionMerge`. O(M + N)
     if not tree1:
         return tree1
-    else: if not tree2:
+    elif not tree2:
         return tree2
     else:
         let l, b, r = splitLtGt(tree1.key, tree2)
@@ -652,7 +652,7 @@ def intersection<K,V>(tree1:BBTree<K,V>?, tree2:BBTree<K,V>?) -> BBTree<K,V>?:
         else:
             return join(intersection(tree1.left, l), intersection(tree1.right, r))
 
-def intersectionMerge(tree1, tree2, merge): // merge: (K,V,V)->V // -> BBTree<K,V>
+def intersectionMerge<K,V>(tree1:BBTree<K,V>?, tree2:BBTree<K,V>?, merge) -> BBTree<K,V>?:
     // Returns the set intersection of `tree1` and `tree2`. In other words, returns the keys
     // that are in both trees.
     // When viewed as maps, returns the key,value pairs for keys that appear in both trees;
@@ -661,7 +661,7 @@ def intersectionMerge(tree1, tree2, merge): // merge: (K,V,V)->V // -> BBTree<K,
     // `tree2` respectively.  O(M + N)
     if not tree1:
         return tree1
-    else: if not tree2:
+    elif not tree2:
         return tree2
     else:
         let l, b, v, r = splitMerge(tree1.key, tree1.val, tree2, merge)
@@ -670,13 +670,13 @@ def intersectionMerge(tree1, tree2, merge): // merge: (K,V,V)->V // -> BBTree<K,
         else:
             return join(intersectionMerge(tree1.left, l, merge), intersectionMerge(tree1.right, r, merge))
 
-def isSubset(tree1, tree2): // -> bool
+def isSubset(tree1, tree2) -> bool:
     // Returns true iff the keys in `tree1` form a subset of the keys in `tree2`. In other words,
     // if all the keys that are in `tree1` are also in `tree2`. O(N) where N is `len(tree1)`
     // Use `isProperSubset` instead to determins that there are keys in `tree2` that are not in `tree1`.
     if not tree1:
         return true
-    else: if len(tree1) > len(tree2):
+    elif len(tree1) > len(tree2):
         return false
     else:
         assert(tree2) // tree2 is not nil or else the above length test would have been true
@@ -685,14 +685,14 @@ def isSubset(tree1, tree2): // -> bool
             return isSubset(tree1.left, tree2.left) and
                      tree2.contains(tree1.key) and
                      isSubset(tree1.right, tree2)
-        else: if dif > 0:
+        elif dif > 0:
             return isSubset(tree1.right, tree2.right) and
                      tree2.contains(tree1.key) and
                      isSubset(tree1.left, tree2)
         else: // tree1.key and tree2.key are eq
             return isSubset(tree1.left, tree2.left) and isSubset(tree1.right, tree2.right)
 
-def disjoint(tree1, tree2): // -> bool
+def disjoint(tree1, tree2) -> bool:
     // Returns true iff `tree1` and `tree2` have no keys in common. O(N) where N is
     // `len(tree1)`
     if tree1 and tree2:
@@ -701,7 +701,7 @@ def disjoint(tree1, tree2): // -> bool
             if not disjoint(tree1.left, tree2.left): return false
             if tree2.contains(tree1.key): return false
             return disjoint(tree1.right, tree2)
-        else: if dif > 0:
+        elif dif > 0:
             if not disjoint(tree1.right, tree2.right): return false
             if tree2.contains(tree1.key): return false
             return disjoint(tree1.left, tree2)
@@ -710,13 +710,13 @@ def disjoint(tree1, tree2): // -> bool
     else: // tree1 or tree2 is empty
         return true // default
 
-def isProperSubset(tree1, tree2): // -> bool
+def isProperSubset(tree1, tree2) -> bool:
     // Returns true iff the keys in `tree1` form a proper subset of the keys in `tree2`.
     // In other words, if all the keys that are in `tree1` are also in `tree2`, but there are
     // keys in `tree2` that are not in `tree1`.  O(N) where N is `len(tree1)`
     return isSubset(tree1, tree2) and len(tree1) < len(tree2)
 
-def setEqual(tree1, tree2): // -> bool
+def setEqual(tree1, tree2) -> bool:
     // Returns true if both `tree1` and `tree2` have the same keys.
     return len(tree1) == len(tree2) and isSubset(tree1, tree2)
 
@@ -805,10 +805,10 @@ def balanced(node) -> int: // returns size in nodes or -1 for error
         if (sl + sr) <= 1:
             // balanced
             nil
-        else: if sr > (omega * sl):
+        elif sr > (omega * sl):
             // fprintf(stderr, "Error in bbwatree balanced: sr %u > omega * %u\n", sr, sl);
             return -1
-        else: if sl > (omega * sr):
+        elif sl > (omega * sr):
             // fprintf(stderr, "Error in bbwatree balanced: sl %u > omega * %u\n", sl, sr);
             return -1
 
@@ -845,12 +845,12 @@ def test1():
     //ok foldl(tre2, false): print(_k); true
     foreach(tre2): print(_); true
 
-    //let f = def(k,v,b): concat_string([b,k],":")
+    //let f = fn(k,v,b): concat_string([b,k],":")
     //print(foldl(tre2, "keys", f))
     print(foldl(tre2, "keys") k, v, b: v; concat_string([b, k],":"))
 
     // segfault:
-    // print(foldl(tre2, "keys"): def(k,v,b): concat_string([b,k],":"))
+    // print(foldl(tre2, "keys"): fn(k,v,b): concat_string([b,k],":"))
 
     print(foldl(tre2, 0): _a; _b + _c)
 
