@@ -402,7 +402,7 @@ def delMin(root): // -> BBTree<K,V>
     if not root:
         return root
     else:
-        let mink, minv, node = extractMin(root)
+        let _mink, _minv, node = extractMin(root)
         // discard mink
         // discard minv
         return node
@@ -412,7 +412,7 @@ def delMax(root): // -> BBTree<K,V>
     if not root:
         return root
     else:
-        let maxk, maxv, node = extractMax(root)
+        let _maxk, _maxv, node = extractMax(root)
         // discard maxk
         // discard maxv
         return node
@@ -573,7 +573,7 @@ def union<K,V>(tree1:BBTree<K,V>?, tree2:BBTree<K,V>?)-> BBTree<K,V>?:
     elif not tree2:
         return tree1
     else:
-        let l, b, r = splitLtGt(tree1.key, tree2)
+        let l, _b, r = splitLtGt(tree1.key, tree2)
         // discard b
         return join(tree1.key, tree1.val, union(tree1.left, l), union(tree1.right, r))
 
@@ -591,7 +591,7 @@ def unionMerge<K,V>(tree1:BBTree<K,V>?, tree2:BBTree<K,V>?, merge) -> BBTree<K,V
     elif not tree2:
         return tree1
     else:
-        let l, b, v, r = splitMerge(tree1.key, tree1.val, tree2, merge)
+        let l, _b, v, r = splitMerge(tree1.key, tree1.val, tree2, merge)
         // discard b
         return join(tree1.key, v, unionMerge(tree1.left, l, merge), unionMerge(tree1.right, r, merge))
 
@@ -601,7 +601,7 @@ def difference<K,V>(tree1:BBTree<K,V>?, tree2:BBTree<K,V>?) -> BBTree<K,V>?:
     if not tree1 or not tree2:
         return tree1
     else:
-        let l, b, r = splitLtGt(tree2.key, tree1)
+        let l, _b, r = splitLtGt(tree2.key, tree1)
         // discard b
         return join(difference(l, tree2.left), difference(r, tree2.right))
 

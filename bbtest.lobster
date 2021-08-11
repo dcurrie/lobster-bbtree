@@ -182,12 +182,12 @@ def tstput(k: int):
     tree = tree.add(key, val)
 
 def tstget(k: int) -> int:
-    let key, val = make_random_key_val(k)
+    let key, _val = make_random_key_val(k)
     //discard val
     return tree.get(key, 1)
 
 def tstrem(k: int):
-    let key, val = make_random_key_val(k)
+    let key, _val = make_random_key_val(k)
     //discard val
     tree = tree.del(key)
 
